@@ -18,3 +18,17 @@ VALUES ('S1', 'Q1', 200),
 select Store, 'Q' || cast(10- sum(cast(right(Quarter,1) as int)) as varchar(1))
 from STORES
 group by 1
+
+
+******************************Cross Join ********************************
+
+with cte as (select distinct s2.Store, s1.Quarter from STORES s1
+cross join STORES s2)
+
+
+--select * from cte
+
+select cte.* from cte
+left join STORES
+on cte.Store = STORES.Store and cte.Quarter = STORES.Quarter
+where STORES.Quarter is null;
