@@ -72,4 +72,14 @@ round(1.0*tt/sum(tt) over()*100,2)
 from cte1;
 
 
+--Q5. Among all the users who installed the app on the given day,
+-- how many did in app purchased on the very next day
 
+select a2.event_date,
+sum(case when a1.event_name='app-installed' and a2.event_name='app-purchase' 
+and a2.event_date-a1.event_date=1 then 1 else 0 end)
+from activity a1
+inner join activity a2 
+on a1.user_id = a2.user_id
+group by 1
+order by 1;
