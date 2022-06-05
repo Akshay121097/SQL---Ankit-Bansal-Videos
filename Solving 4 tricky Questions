@@ -1,0 +1,56 @@
+CREATE TABLE students(
+ studentid int ,
+ studentname varchar(255) ,
+ subject varchar(255) ,
+ marks int ,
+ testid int ,
+ testdate date 
+);
+
+insert into students values (2,'Max Ruin','Subject1',63,1,'2022-01-02');
+insert into students values (3,'Arnold','Subject1',95,1,'2022-01-02');
+insert into students values (4,'Krish Star','Subject1',61,1,'2022-01-02');
+insert into students values (5,'John Mike','Subject1',91,1,'2022-01-02');
+insert into students values (4,'Krish Star','Subject2',71,1,'2022-01-02');
+insert into students values (3,'Arnold','Subject2',32,1,'2022-01-02');
+insert into students values (5,'John Mike','Subject2',61,2,'2022-11-02');
+insert into students values (1,'John Deo','Subject2',60,1,'2022-01-02');
+insert into students values (2,'Max Ruin','Subject2',84,1,'2022-01-02');
+insert into students values (2,'Max Ruin','Subject3',29,3,'2022-01-03');
+insert into students values (5,'John Mike','Subject3',98,2,'2022-11-02');
+
+
+***************************************************************************
+
+select * from students;
+
+--Q1 Students who score above average marks in each subject 
+with cte as (
+select *,
+round(avg(marks) over(partition by subject),2) as avg_marks,
+case when marks>round(avg(marks) over(partition by subject),2) then 1 else 0 end as flag
+from Students
+order by studentid)
+
+select * from cte
+where flag=1;
+
+--Q2 Percentage of students who scored 90 in any of the subject 
+
+
+
+select 
+round(1.0*count(distinct case when marks> 90 then studentid else null end )*100/ count(distinct studentid),2)
+from Students;
+
+--Q3. Second highest and Second lowest in each subject 
+with cte_2 as (select *,
+dense_rank() over(partition by subject order by marks desc) as top_rnk,
+dense_rank() over(partition by subject order by marks ) as bottom_rnk
+from Students)
+
+select subject,
+sum(case when top_rnk=2 then marks else null end) as second_highest,
+sum(case when bottom_rnk=2 then marks else null end) as second_lowest
+from cte_2
+group by 1;
