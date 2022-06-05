@@ -1,0 +1,54 @@
+CREATE table activity
+(
+user_id varchar(20),
+event_name varchar(20),
+event_date date,
+country varchar(20)
+);
+--delete from activity;
+insert into activity values (1,'app-installed','2022-01-01','India')
+,(1,'app-purchase','2022-01-02','India')
+,(2,'app-installed','2022-01-01','USA')
+,(3,'app-installed','2022-01-01','USA')
+,(3,'app-purchase','2022-01-03','USA')
+,(4,'app-installed','2022-01-03','India')
+,(4,'app-purchase','2022-01-03','India')
+,(5,'app-installed','2022-01-03','SL')
+,(5,'app-purchase','2022-01-03','SL')
+,(6,'app-installed','2022-01-04','Pakistan')
+,(6,'app-purchase','2022-01-04','Pakistan');
+
+
+select * from activity;
+
+--Q1. Total Active Users each day
+
+
+select event_date, count(distinct user_id) as total_active_users
+from activity
+group by 1
+order by 1;
+
+
+--Q2. Total Active Users each week
+
+select extract(week from event_date), count(distinct user_id) as total_active_users
+from activity
+group by  extract(week from event_date);
+
+
+--Q3 date wise total number of users who made the purchase same day
+-- and they installed the app
+
+select * from activity;
+
+with cte as (select event_date, user_id, count(distinct event_name) as events
+from activity
+group by 1,2)
+
+
+select event_date,
+sum(case when events=2 then 1 else 0 end) as no_of_users
+from cte 
+group by 1
+
