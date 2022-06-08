@@ -18,4 +18,27 @@ select emp_id
 , sum(case when salary_component_type='hike_percent' then val end) as hike_percent
 from emp_compensation
 group by 1
-order by 1;;
+order by 1;
+
+
+*******************************************Unpivot **********************************************************
+with cte as (select emp_id
+, sum(case when salary_component_type='salary' then val end) as salary
+, sum(case when salary_component_type='bonus' then val end) as bonus
+, sum(case when salary_component_type='hike_percent' then val end) as hike_percent
+from emp_compensation
+group by 1
+order by 1)
+
+--select * from cte;
+
+select emp_id, 'salary' as salary_component_type, salary as val
+from cte 
+union all
+
+select emp_id, 'bonus' as salary_component_type, bonus as val
+from cte 
+union all
+select emp_id, 'hike_percent' as salary_component_type, hike_percent as val
+from cte 
+
