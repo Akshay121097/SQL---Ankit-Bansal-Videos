@@ -1,0 +1,24 @@
+create table list (id varchar(5));
+insert into list values ('a');
+insert into list values ('a');
+insert into list values ('b');
+insert into list values ('c');
+insert into list values ('c');
+insert into list values ('c');
+insert into list values ('d');
+insert into list values ('d');
+insert into list values ('e');
+
+**********************************************************************************************
+select * from list;
+
+with cte as (select id
+, 'DUP' || cast(row_number() over(order by id) as varchar(10)) as output
+from list
+group by 1
+having count(1)>1)
+
+select list.*, output
+from list 
+left join cte 
+on list.id = cte.id 
