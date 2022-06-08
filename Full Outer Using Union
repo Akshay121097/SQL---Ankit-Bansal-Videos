@@ -1,0 +1,40 @@
+create table emp_2020
+(
+emp_id int,
+designation varchar(20)
+);
+
+create table emp_2021
+(
+emp_id int,
+designation varchar(20)
+);
+
+insert into emp_2020 values (1,'Trainee'), (2,'Developer'),(3,'Senior Developer'),(4,'Manager');
+insert into emp_2021 values (1,'Developer'), (2,'Developer'),(3,'Manager'),(5,'Trainee');
+
+
+*******************************************************************************************************************
+
+select * from emp_2020;
+select * from emp_2021;
+
+select *
+from emp_2020
+full join emp_2021
+on emp_2020.emp_id = emp_2021.emp_id;
+
+
+
+select *
+from emp_2020
+left join emp_2021
+on emp_2020.emp_id = emp_2021.emp_id
+
+union all
+
+select emp_2020.*, emp_2021.*
+from emp_2021
+full join emp_2020
+on emp_2020.emp_id = emp_2021.emp_id
+where emp_2020.emp_id is null;
