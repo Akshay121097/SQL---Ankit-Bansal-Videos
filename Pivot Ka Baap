@@ -21,3 +21,9 @@ max(case when city='Delhi' then name end) as Delhi
 
 from cte
 group by rnk ;
+
+
+ bangalore | delhi | mumbai 
+-----------+-------+--------
+ Rahul     |       | Sachin
+ Mayank    | Virat | Rohit
