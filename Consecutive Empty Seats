@@ -31,3 +31,14 @@ where is_empty='Y'
 select seat_no
 from cte 
 where rnk_1>=3;
+
+
+ seat_no | is_empty 
+---------+----------
+       4 | Y
+       5 | Y
+       6 | Y
+       8 | Y
+       9 | Y
+      10 | Y
+      11 | Y
