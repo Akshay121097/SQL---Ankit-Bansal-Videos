@@ -30,11 +30,25 @@ group by 1
 order by 1;
 
 
+ event_date | count 
+------------+-------
+ 2022-01-01 |     3
+ 2022-01-02 |     1
+ 2022-01-03 |     3
+ 2022-01-04 |     1
+(4 rows)
+
+
 --Q2. Total Active Users each week
 
 select extract(week from event_date), count(distinct user_id) as total_active_users
 from activity
 group by  extract(week from event_date);
+
+ week | users 
+------+-------
+    1 |     4
+   52 |     3
 
 
 --Q3 date wise total number of users who made the purchase same day
@@ -51,6 +65,29 @@ select event_date,
 sum(case when events=2 then 1 else 0 end) as no_of_users
 from cte 
 group by 1
+
+***************************More Generalized Solution***********************************************
+
+select * from activity;
+
+with cte as (select event_date,user_id, count(distinct event_name) as activity
+from activity
+group by 1,2 )
+
+select event_date, count(distinct users) as number_of_users from
+(select *,
+case when activity=2 then user_id end as users
+from cte)A 
+group by 1;
+
+event_date | number_of_users 
+------------+-----------------
+ 2022-01-01 |               0
+ 2022-01-02 |               0
+ 2022-01-03 |               2
+ 2022-01-04 |               1
+(4 rows)
+
 
 
 
