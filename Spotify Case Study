@@ -108,6 +108,13 @@ select bracket,
 round(1.0*tt/sum(tt) over()*100,2)
 from cte1;
 
+ country | percentage 
+---------+------------
+ India   |       0.40
+ Other   |       0.40
+ USA     |       0.20
+(3 rows)
+
 
 --Q5. Among all the users who installed the app on the given day,
 -- how many did in app purchased on the very next day
@@ -120,3 +127,11 @@ inner join activity a2
 on a1.user_id = a2.user_id
 group by 1
 order by 1;
+
+
+event_date | sum 
+------------+-----
+ 2022-01-01 |   0
+ 2022-01-02 |   1
+ 2022-01-03 |   0
+ 2022-01-04 |   0
