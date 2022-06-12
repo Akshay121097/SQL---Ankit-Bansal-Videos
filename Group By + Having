@@ -13,3 +13,15 @@ inner join exams e2
 on e1.student_id = e2.student_id
 where e1.subject > e2.subject
 and e1.marks = e2.marks;
+
+*****************************2nd solution*************************
+select student_id
+from exams
+group by 1 
+having count(distinct subject)=2 and count(distinct marks)=1;
+
+
+
+ student_id 
+------------
+          1
