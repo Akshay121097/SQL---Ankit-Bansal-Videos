@@ -1,0 +1,38 @@
+create table business_city (
+business_date date,
+city_id int
+);
+delete from business_city;
+insert into business_city
+values(cast('2020-01-02' as date),3),(cast('2020-07-01' as date),7),(cast('2021-01-01' as date),3),(cast('2021-02-03' as date),19)
+,(cast('2022-12-01' as date),3),(cast('2022-12-15' as date),3),(cast('2022-02-28' as date),12);
+
+
+*********************************************************************************************************
+select * from business_city;
+
+with cte as (
+select *,
+min(business_date) over(partition by city_id) as first_val
+from business_city)
+
+select extract(year from first_val), count(distinct city_id) as new_cities from cte
+group by extract(year from first_val)
+
+business_date | city_id 
+---------------+---------
+ 2020-01-02    |       3
+ 2020-07-01    |       7
+ 2021-01-01    |       3
+ 2021-02-03    |      19
+ 2022-12-01    |       3
+ 2022-12-15    |       3
+ 2022-02-28    |      12
+(7 rows)
+
+ extract | new_cities 
+---------+------------
+    2020 |          2
+    2021 |          1
+    2022 |          1
+(3 rows)
