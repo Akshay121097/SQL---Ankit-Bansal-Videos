@@ -25,7 +25,7 @@ having count(distinct call_type)=2
 and
 sum(case when call_type='OUT' then call_duration end )>sum(case when call_type='INC' then call_duration end )
 
-Output:
+Output
 
  call_number | output | input 
 -------------+--------+-------
