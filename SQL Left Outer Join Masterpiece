@@ -1,0 +1,103 @@
+create table emp(
+emp_id int,
+emp_name varchar(20),
+dept_id int,
+salary int,
+manager_id int,
+emp_age int);
+
+create table dept
+(
+dept_id int ,
+dep_name varchar(50));
+
+insert into emp
+values
+(1, 'Ankit', 100,10000, 4, 39);
+insert into emp
+values (2, 'Mohit', 100, 15000, 5, 48);
+insert into emp
+values (3, 'Vikas', 100, 10000,4,37);
+insert into emp
+values (4, 'Rohit', 100, 5000, 2, 16);
+insert into emp
+values (5, 'Mudit', 200, 12000, 6,55);
+insert into emp
+values (6, 'Agam', 200, 12000,2, 14);
+insert into emp
+values (7, 'Sanjay', 200, 9000, 2,13);
+insert into emp
+values (8, 'Ashish', 200,5000,2,12);
+insert into emp
+values (9, 'Mukesh',300,6000,6,51);
+insert into emp
+values (10, 'Rakesh',500,7000,6,50);
+
+insert into dept
+values
+(100,'Analytics'),(200,'IT'),(300,'HR'),(400,'Text Analytics');
+
+
+select * from emp;
+select * from dept;
+******************************************************
+
+select *
+from emp
+left join dept
+on emp.dept_id=dept.dept_id;
+
+emp_id | emp_name | dept_id | salary | manager_id | emp_age | dept_id | dep_name  
+--------+----------+---------+--------+------------+---------+---------+-----------
+      1 | Ankit    |     100 |  10000 |          4 |      39 |     100 | Analytics
+      2 | Mohit    |     100 |  15000 |          5 |      48 |     100 | Analytics
+      3 | Vikas    |     100 |  10000 |          4 |      37 |     100 | Analytics
+      4 | Rohit    |     100 |   5000 |          2 |      16 |     100 | Analytics
+      5 | Mudit    |     200 |  12000 |          6 |      55 |     200 | IT
+      6 | Agam     |     200 |  12000 |          2 |      14 |     200 | IT
+      7 | Sanjay   |     200 |   9000 |          2 |      13 |     200 | IT
+      8 | Ashish   |     200 |   5000 |          2 |      12 |     200 | IT
+      9 | Mukesh   |     300 |   6000 |          6 |      51 |     300 | HR
+     10 | Rakesh   |     500 |   7000 |          6 |      50 |         | 
+(10 rows)
+
+
+select *
+from emp
+left join dept
+on emp.dept_id=dept.dept_id
+where dept.dep_name='Analytics';
+
+=>  join first and then filter( where clause) on the entire result--> only those rows displayed after join happens which 
+satisfies the where clause. Case 2 works like an inner join + where clause.
+
+
+ emp_id | emp_name | dept_id | salary | manager_id | emp_age | dept_id | dep_name  
+--------+----------+---------+--------+------------+---------+---------+-----------
+      1 | Ankit    |     100 |  10000 |          4 |      39 |     100 | Analytics
+      2 | Mohit    |     100 |  15000 |          5 |      48 |     100 | Analytics
+      3 | Vikas    |     100 |  10000 |          4 |      37 |     100 | Analytics
+      4 | Rohit    |     100 |   5000 |          2 |      16 |     100 | Analytics
+(4 rows)
+
+select *
+from emp
+left join dept
+on emp.dept_id=dept.dept_id
+and dept.dep_name='Analytics'
+
+=> join having a condition ( on A and B)--> filter on right table and then join( Since dep.dept_name is from right table)
+
+ emp_id | emp_name | dept_id | salary | manager_id | emp_age | dept_id | dep_name  
+--------+----------+---------+--------+------------+---------+---------+-----------
+      1 | Ankit    |     100 |  10000 |          4 |      39 |     100 | Analytics
+      2 | Mohit    |     100 |  15000 |          5 |      48 |     100 | Analytics
+      3 | Vikas    |     100 |  10000 |          4 |      37 |     100 | Analytics
+      4 | Rohit    |     100 |   5000 |          2 |      16 |     100 | Analytics
+      5 | Mudit    |     200 |  12000 |          6 |      55 |         | 
+      6 | Agam     |     200 |  12000 |          2 |      14 |         | 
+      7 | Sanjay   |     200 |   9000 |          2 |      13 |         | 
+      8 | Ashish   |     200 |   5000 |          2 |      12 |         | 
+      9 | Mukesh   |     300 |   6000 |          6 |      51 |         | 
+     10 | Rakesh   |     500 |   7000 |          6 |      50 |         | 
+(10 rows)
