@@ -54,3 +54,16 @@ sum(case when top_rnk=2 then marks else null end) as second_highest,
 sum(case when bottom_rnk=2 then marks else null end) as second_lowest
 from cte_2
 group by 1;
+
+
+-- Q4 marks increased or decreased from prevoius tests
+
+with cte as (select *,
+marks-lag(marks,1,marks) over(partition by studentid order by testdate) as diff
+from students)
+
+select *,
+case when diff<=0 then 'Dec'
+     when diff>0 then 'Inc'
+     end as flag
+from cte
