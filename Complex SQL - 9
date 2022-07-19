@@ -47,5 +47,30 @@ from users
 left join cte 
 on users.user_id = cte.seller_id
 where rnk= 2 or rnk is null;
+
+
+or 
+
+
+ 
+ with cte as (select user_id,order_id, order_date,item_brand,favorite_brand,
+ dense_rank() over(partition by seller_id order by order_date) as rnk,
+ count(1) over(partition by seller_id) as cnt
+ from users
+ left join orders
+ on users.user_id = orders.seller_id
+ left join items
+ on orders.item_id = items.item_id)
+ 
+ 
+ select user_id,
+ case when coalesce(item_brand,'x')=coalesce(favorite_brand,'y') then 'yes'
+ else 'no' 
+ end as flag
+ from cte 
+where rnk=2 or cnt=1
+order by 1;
+ 
+ 
  
  
