@@ -1,0 +1,43 @@
+create table hospital ( emp_id int
+, action varchar(10)
+, time timestamp);
+
+insert into hospital values ('1', 'in', '2019-12-22 09:00:00');
+insert into hospital values ('1', 'out', '2019-12-22 09:15:00');
+insert into hospital values ('2', 'in', '2019-12-22 09:00:00');
+insert into hospital values ('2', 'out', '2019-12-22 09:15:00');
+insert into hospital values ('2', 'in', '2019-12-22 09:30:00');
+insert into hospital values ('3', 'out', '2019-12-22 09:00:00');
+insert into hospital values ('3', 'in', '2019-12-22 09:15:00');
+insert into hospital values ('3', 'out', '2019-12-22 09:30:00');
+insert into hospital values ('3', 'in', '2019-12-22 09:45:00');
+insert into hospital values ('4', 'in', '2019-12-22 09:45:00');
+insert into hospital values ('5', 'out', '2019-12-22 09:40:00');
+
+
+select * from hospital;
+
+
+Solution-1:
+
+select h1.emp_id,h1.action,h1.time,
+max(h2.time)
+from hospital h1 
+inner join hospital h2 
+on h1.emp_id = h2.emp_id
+group by 1,2,3
+having h1.time=max(h2.time)
+order by 1
+
+
+
+Solution-2:
+
+with cte as (select *,
+row_number() over(partition by emp_id order by time desc) as rnk
+from hospital)
+
+
+select emp_id, action
+from cte 
+where rnk=1
