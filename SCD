@@ -39,3 +39,18 @@ inner join cte
 on HoursWorked.emp_name = cte.emp_name
 where work_date>=bill_date and work_date<till_date
 group by HoursWorked.emp_name
+
+
+
+--Altername Solution
+
+select emp_name, sum(bill_hrs*bill_rate)
+from
+(select h.*, b.bill_rate,bill_date,
+row_number() over(partition by h.emp_name, work_date order by bill_date desc) as rn
+from HoursWorked h 
+inner join billings b 
+on h.emp_name = b.emp_name
+and h.work_date>=b.bill_date) t1 
+where rn=1
+group by 1 
