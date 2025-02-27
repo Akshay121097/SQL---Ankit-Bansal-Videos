@@ -1,0 +1,25 @@
+create table source(id int, name varchar(5));
+
+create table target(id int, name varchar(5));
+
+insert into source values(1,'A'),(2,'B'),(3,'C'),(4,'D');
+
+insert into target values(1,'A'),(2,'B'),(4,'X'),(5,'F');
+
+
+select * from source;
+select * from target;
+
+
+with cte as (select coalesce(s.id,t.id) as id,
+case when s.name = t.name then 'NA'
+ when t.name is null then 'New in source'
+ when s.name is null then 'New in target'
+ else 'Mismatch' end as flag
+from source s
+full join target t 
+on s.id = t.id )
+
+select id,flag
+from cte 
+where flag<>'NA'
