@@ -1,0 +1,59 @@
+
+CREATE TABLE flights 
+(
+    cid VARCHAR(512),
+    fid VARCHAR(512),
+    origin VARCHAR(512),
+    Destination VARCHAR(512)
+);
+
+INSERT INTO flights (cid, fid, origin, Destination) VALUES ('1', 'f1', 'Del', 'Hyd');
+INSERT INTO flights (cid, fid, origin, Destination) VALUES ('1', 'f2', 'Hyd', 'Blr');
+INSERT INTO flights (cid, fid, origin, Destination) VALUES ('2', 'f3', 'Mum', 'Agra');
+INSERT INTO flights (cid, fid, origin, Destination) VALUES ('2', 'f4', 'Agra', 'Kol');
+
+
+
+CREATE TABLE sales 
+(
+    order_date date,
+    customer VARCHAR(512),
+    qty INT
+);
+
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-01-01', 'C1', '20');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-01-01', 'C2', '30');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-02-01', 'C1', '10');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-02-01', 'C3', '15');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-03-01', 'C5', '19');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-03-01', 'C4', '10');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-04-01', 'C3', '13');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-04-01', 'C5', '15');
+INSERT INTO sales (order_date, customer, qty) VALUES ('2021-04-01', 'C6', '10');
+
+
+
+select * from flights;
+select * from  sales;
+
+
+with cte as (select *,
+row_number() over(partition by cid order by fid) as rn_st,
+row_number() over(partition by cid order by fid desc ) as rn_fn
+from flights)
+
+select cid,
+max(case when rn_st=1 then origin else null end) as origin,
+max(case when rn_fn=1 then Destination else null end) as Destination
+from cte 
+group by cid;
+
+
+with cte1 as (select extract(MONTH from order_date) as date, customer,
+min(extract(MONTH from order_date)) over(partition by customer) as rn
+from sales)
+
+select date,
+count(distinct case when date=rn then customer else null end) as new_customners
+from cte1
+group by 1
