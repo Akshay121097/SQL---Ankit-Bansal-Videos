@@ -1,0 +1,108 @@
+
+-- Create employees table
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL,
+    join_date DATE NOT NULL,
+    department VARCHAR(10) NOT NULL
+);
+
+-- Insert sample data
+INSERT INTO employees (employee_id, name, join_date, department)
+VALUES
+    (1, 'Alice', '2018-06-15', 'IT'),
+    (2, 'Bob', '2019-02-10', 'Finance'),
+    (3, 'Charlie', '2017-09-20', 'HR'),
+    (4, 'David', '2020-01-05', 'IT'),
+    (5, 'Eve', '2016-07-30', 'Finance'),
+    (6, 'Sumit', '2016-06-30', 'Finance');
+ 
+-- Create salary_history table
+CREATE TABLE salary_history (
+    employee_id INT,
+    change_date DATE NOT NULL,
+    salary DECIMAL(10,2) NOT NULL,
+    promotion VARCHAR(3)
+);
+
+-- Insert sample data
+INSERT INTO salary_history (employee_id, change_date, salary, promotion)
+VALUES
+    (1, '2018-06-15', 50000, 'No'),
+    (1, '2019-08-20', 55000, 'No'),
+    (1, '2021-02-10', 70000, 'Yes'),
+    (2, '2019-02-10', 48000, 'No'),
+    (2, '2020-05-15', 52000, 'Yes'),
+    (2, '2023-01-25', 68000, 'Yes'),
+    (3, '2017-09-20', 60000, 'No'),
+    (3, '2019-12-10', 65000, 'No'),
+    (3, '2022-06-30', 72000, 'Yes'),
+    (4, '2020-01-05', 45000, 'No'),
+    (4, '2021-07-18', 49000, 'No'),
+    (5, '2016-07-30', 55000, 'No'),
+    (5, '2018-11-22', 62000, 'Yes'),
+    (5, '2021-09-10', 75000, 'Yes'),
+    (6, '2016-06-30', 55000, 'No'),
+    (6, '2017-11-22', 50000, 'No'),
+    (6, '2018-11-22', 40000, 'No'),
+    (6, '2021-09-10', 75000, 'Yes');
+    
+    
+    select *
+    from salary_history;
+    
+    --Task-1
+    -- select *
+    -- from 
+    -- (select *,
+    -- row_number() over(partition by employee_id order by salary desc) as rn
+    -- from salary_history) t1 
+    -- where rn=1;
+    
+    
+--Task-2   
+-- select employee_id,
+-- sum(case when promotion='Yes' then 1 else 0 end)
+-- from salary_history
+-- group by 1
+-- order by 1;
+
+
+
+--Task-3  
+  -- with cte as( select *,
+  --   round(100.00*(salary-lag(salary,1,salary) over(partition by employee_id order by change_date))/lag(salary,1,salary) over(partition by employee_id order by change_date),2) as perc_change
+  --   from salary_history)
+    
+  --   select *
+  --   from 
+  --   (select *,
+  --   row_number() over(partition by employee_id order by perc_change desc) as rn
+  --   from cte) t1 
+  --   where rn=1
+  --   order by employee_id, change_date
+  
+  --Task-4
+  -- with cte as (select *,
+  -- salary-lag(salary,1,salary) over(partition by employee_id order by change_date)  as salary_diff
+  -- from salary_history)
+  
+  -- select employee_id
+  -- from cte 
+  -- group by employee_id
+  -- having min(salary_diff)=0
+  
+  
+  
+  --Task-6
+  with cte as (select *,
+  row_number() over(partition by employee_id order by change_date asc) as least_salary_flag,
+    row_number() over(partition by employee_id order by salary desc) as most_salary_flag
+  from salary_history)
+  
+  select employee_id,
+ sum (case when least_salary_flag=1 then salary else null end) as min_salary,
+  sum (case when most_salary_flag=1 then salary else null end) as max_salary,
+    100.00*(sum (case when most_salary_flag=1 then salary else null end)/ sum (case when least_salary_flag=1 then salary else null end)-1) as perc_change
+  from cte
+  group by 1
