@@ -1,0 +1,70 @@
+CREATE TABLE airports (
+    port_code VARCHAR(10) PRIMARY KEY,
+    city_name VARCHAR(100)
+);
+
+CREATE TABLE flights (
+    flight_id varchar (10),
+    start_port VARCHAR(10),
+    end_port VARCHAR(10),
+    start_time timestamp,
+    end_time timestamp
+);
+
+--delete from airports;
+INSERT INTO airports (port_code, city_name) VALUES
+('JFK', 'New York'),
+('LGA', 'New York'),
+('EWR', 'New York'),
+('LAX', 'Los Angeles'),
+('ORD', 'Chicago'),
+('SFO', 'San Francisco'),
+('HND', 'Tokyo'),
+('NRT', 'Tokyo'),
+('KIX', 'Osaka');
+
+--delete from flights;
+INSERT INTO flights VALUES
+(1, 'JFK', 'HND', '2025-06-15 06:00', '2025-06-15 18:00'),
+(2, 'JFK', 'LAX', '2025-06-15 07:00', '2025-06-15 10:00'),
+(3, 'LAX', 'NRT', '2025-06-15 10:00', '2025-06-15 22:00'),
+(4, 'JFK', 'LAX', '2025-06-15 08:00', '2025-06-15 11:00'),
+(5, 'LAX', 'KIX', '2025-06-15 11:30', '2025-06-15 22:00'),
+(6, 'LGA', 'ORD', '2025-06-15 09:00', '2025-06-15 12:00'),
+(7, 'ORD', 'HND', '2025-06-15 11:30', '2025-06-15 23:30'),
+(8, 'EWR', 'SFO', '2025-06-15 09:00', '2025-06-15 12:00'),
+(9, 'LAX', 'HND', '2025-06-15 13:00', '2025-06-15 23:00'),
+(10, 'KIX', 'NRT', '2025-06-15 08:00', '2025-06-15 10:00');
+
+
+
+
+
+select * from airports;
+select * from flights;
+
+
+--Connecting flights
+select t1.flight_id,t2.flight_id, concat(t1.flight_id,',',t2.flight_id),t3.city_name,
+t5.city_name,t4.city_name,
+round(EXTRACT(EPOCH FROM (t2.end_time - t1.start_time))/60) as time_taken
+from flights t1 
+left join flights t2 
+on t1.end_port = t2.start_port 
+inner join airports t3 
+on t1.start_port = t3.port_code and t3.city_name='New York'
+inner join airports t4
+on t2.end_port = t4.port_code and t4.city_name='Tokyo'
+inner join airports t5
+on t1.end_port = t5.port_code
+where t1.end_time <= t2.start_time
+union all 
+--Direct FLights
+select t1.flight_id,t1.flight_id, t1.flight_id,
+t3.city_name, null as city_name,  t4.city_name,
+round(EXTRACT(EPOCH FROM (t1.end_time - t1.start_time))/60) as time_taken
+from flights t1 
+inner join airports t3 
+on t1.start_port = t3.port_code and t3.city_name='New York'
+inner join airports t4
+on t1.end_port = t4.port_code and t4.city_name='Tokyo'
