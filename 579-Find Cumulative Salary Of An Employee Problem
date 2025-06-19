@@ -1,0 +1,39 @@
+-- Step 1: Create the table
+CREATE TABLE IF NOT EXISTS EmployeeSalary (
+    id INTEGER,
+    month INTEGER,
+    salary INTEGER,
+    PRIMARY KEY (id, month)  -- Composite primary key to avoid duplicate entries per employee per month
+);
+
+-- Step 2: Insert data (with UPSERT logic)
+INSERT INTO EmployeeSalary (id, month, salary) VALUES
+    (1, 1, 20),
+    (2, 1, 20),
+    (1, 2, 30),
+    (2, 2, 30),
+    (3, 2, 40),
+    (1, 3, 40),
+    (3, 3, 60),
+    (1, 4, 60),
+    (3, 4, 70)
+ON CONFLICT (id, month) DO UPDATE SET
+    salary = EXCLUDED.salary;
+
+
+
+select * from EmployeeSalary;
+
+
+with cte as (select *,
+row_number() over(partition by id order by month desc) as rn,
+sum(salary) over(partition by id order by month rows between 2 preceding and current row) as cum_sum
+from EmployeeSalary)
+
+
+
+
+select *
+from cte 
+where rn>1
+order by id, month desc
