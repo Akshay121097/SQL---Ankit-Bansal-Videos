@@ -1,0 +1,40 @@
+-- Step 1: Create the Visits table
+CREATE TABLE IF NOT EXISTS Visits (
+    id INTEGER PRIMARY KEY,
+    visit_date DATE NOT NULL,
+    people INTEGER NOT NULL
+);
+
+-- Step 2: Insert the data with UPSERT logic
+INSERT INTO Visits (id, visit_date, people) VALUES
+    (1, '2017-01-01', 10),
+    (2, '2017-01-02', 109),
+    (3, '2017-01-03', 150),
+    (4, '2017-01-04', 99),
+    (5, '2017-01-05', 145),
+    (6, '2017-01-06', 1455),
+    (7, '2017-01-07', 199),
+    (8, '2017-01-09', 188)
+ON CONFLICT (id) DO UPDATE SET
+    visit_date = EXCLUDED.visit_date,
+    people = EXCLUDED.people;
+
+
+
+select *
+from visits;
+
+
+
+with cte as (select *,
+id - row_number() over(order by visit_date) as flag
+from visits
+where people>=100)
+
+
+select id, visit_date, people
+from
+(select *,
+count(1) over(partition by flag) as cnt
+from cte) t1 
+where cnt>=3
