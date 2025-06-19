@@ -1,0 +1,34 @@
+-- Create the FrequencyTable
+CREATE TABLE IF NOT EXISTS FrequencyTable (
+    number INTEGER PRIMARY KEY,
+    frequency INTEGER NOT NULL
+);
+
+-- Insert the data with UPSERT logic
+INSERT INTO FrequencyTable (number, frequency) VALUES
+    (0, 7),
+    (1, 1),
+    (2, 3),
+    (3, 1)
+ON CONFLICT (number) DO UPDATE SET
+    frequency = EXCLUDED.frequency;
+
+
+
+
+select *
+from FrequencyTable;
+
+
+with recursive cte as (
+select number, 1 as flag, frequency
+from FrequencyTable
+union all 
+select number, flag+1 , frequency
+from cte
+where flag+1<=frequency)
+
+select avg(number) from (select number,
+row_number() oveR( order by number) - row_number() oveR(order by number desc) as flag_1
+from cte ) t1 
+where abs(flag_1)<=1;
