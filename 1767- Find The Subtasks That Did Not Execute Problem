@@ -1,0 +1,54 @@
+-- Create Tasks table
+CREATE TABLE IF NOT EXISTS Tasks (
+    task_id INTEGER PRIMARY KEY,
+    subtasks_count INTEGER NOT NULL
+);
+
+-- Insert data into Tasks
+INSERT INTO Tasks (task_id, subtasks_count) VALUES
+    (1, 3),
+    (2, 2),
+    (3, 4)
+ON CONFLICT (task_id) DO UPDATE SET
+    subtasks_count = EXCLUDED.subtasks_count;
+
+
+-- Create Executed table
+CREATE TABLE IF NOT EXISTS Executed (
+    task_id INTEGER,
+    subtask_id INTEGER,
+    PRIMARY KEY (task_id, subtask_id)
+);
+
+-- Insert data into Executed
+INSERT INTO Executed (task_id, subtask_id) VALUES
+    (1, 2),
+    (3, 1),
+    (3, 2),
+    (3, 3),
+    (3, 4)
+ON CONFLICT (task_id, subtask_id) DO NOTHING;
+
+
+
+
+
+select * from Tasks;
+
+
+
+
+
+with recursive cte as (select task_id, subtasks_count, 1 as flag 
+from Tasks
+union all 
+select task_id, subtasks_count, flag+1
+from cte
+where flag+1<= subtasks_count)
+
+
+select t1.task_id, flag
+from cte t1 
+left join Executed t2 
+on t1.task_id = t2.task_id and t2.subtask_id = t1.flag
+where t2.subtask_id is null
