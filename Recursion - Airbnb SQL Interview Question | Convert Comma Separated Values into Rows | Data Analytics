@@ -1,0 +1,44 @@
+create table airbnb_searches 
+(
+user_id int,
+date_searched date,
+filter_room_types varchar(200)
+);
+
+
+insert into airbnb_searches values
+(1,'2022-01-01','entire home,private room')
+,(2,'2022-01-02','entire home,shared room')
+,(3,'2022-01-02','private room,shared room')
+,(4,'2022-01-03','private room')
+;
+
+
+with  recursive cte as (select user_id, filter_room_types,
+    LENGTH(filter_room_types) - LENGTH(REPLACE(filter_room_types, ',', '')) + 1 AS length,
+    1 as pos,
+       TRIM(
+        SUBSTRING_INDEX(
+            SUBSTRING_INDEX(filter_room_types, ',', 1),
+            ',', -1
+        )
+    ) as  val 
+from airbnb_searches
+
+union all
+
+select user_id, filter_room_types,
+length,
+pos+1 as pos,
+   TRIM(
+        SUBSTRING_INDEX(
+            SUBSTRING_INDEX(filter_room_types, ',', pos+1),
+            ',', -1
+        )
+    ) as  val 
+from cte 
+where pos+1<= length)
+
+select *
+from cte
+order by user_id, pos
