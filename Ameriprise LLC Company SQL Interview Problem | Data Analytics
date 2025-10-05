@@ -1,0 +1,46 @@
+create table Ameriprise_LLC
+(
+teamID varchar(2),
+memberID varchar(10),
+Criteria1 varchar(1),
+Criteria2 varchar(1)
+);
+insert into Ameriprise_LLC values 
+('T1','T1_mbr1','Y','Y'),
+('T1','T1_mbr2','Y','Y'),
+('T1','T1_mbr3','Y','Y'),
+('T1','T1_mbr4','Y','Y'),
+('T1','T1_mbr5','Y','N'),
+('T2','T2_mbr1','Y','Y'),
+('T2','T2_mbr2','Y','N'),
+('T2','T2_mbr3','N','Y'),
+('T2','T2_mbr4','N','N'),
+('T2','T2_mbr5','N','N'),
+('T3','T3_mbr1','Y','Y'),
+('T3','T3_mbr2','Y','Y'),
+('T3','T3_mbr3','N','Y'),
+('T3','T3_mbr4','N','Y'),
+('T3','T3_mbr5','Y','N');
+
+
+
+select * from Ameriprise_LLC;
+
+
+with cte as (select *,
+case when Criteria2='Y' and Criteria1='Y' then 'Y' else 'N' end as flag 
+from Ameriprise_LLC),
+
+cte_1 as (select teamID
+from cte 
+where flag='Y'
+group by teamID 
+having count(1)>=2)
+
+select t1.*, case when t2.teamID is null then 'N' else flag end as flag_up
+from cte t1 
+left join cte_1 t2 
+on t1.teamID = t2.teamID
+
+
+
