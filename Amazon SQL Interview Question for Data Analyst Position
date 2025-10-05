@@ -20,7 +20,18 @@ select *
 from hospital;
 
 
-youtube: https://www.youtube.com/watch?v=oGYinDMDfnA&list=PLBTZqjSKn0IfuIqbMIqzS-waofsPHMS0E&index=3
+
+select *
+from hospital;
+
+
+with cte as (select *,
+row_number() over(partition by emp_id order by time desc) as rn
+from hospital)
+
+select *
+from cte 
+where rn=1 and action='in'
 
 
 
