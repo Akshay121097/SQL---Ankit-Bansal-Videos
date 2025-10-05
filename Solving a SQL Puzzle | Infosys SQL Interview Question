@@ -1,0 +1,25 @@
+create table input (
+id int,
+formula varchar(10),
+value int
+);
+
+insert into input values (1,'1+4',10),(2,'2+1',5),(3,'3-2',40),(4,'4-1',20);
+
+select * 
+from input;
+
+with cte as (select *,
+substring(formula,1,1) as val1,
+substring(formula,2,1) as sign,
+substring(formula,3,1) as val2
+from input)
+
+select t1.id, t1.formula,
+case when sign='+' then t2.value+t3.value else t2.value-t3.value  end as fianal
+from cte t1 
+inner join input t2 
+on t1.val1 = t2.id 
+inner join input t3 
+on t1.val2 = t3.id 
+order by id
