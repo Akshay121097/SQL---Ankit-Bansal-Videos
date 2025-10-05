@@ -38,3 +38,19 @@ having count(distinct flag) =1 and min(flag)=0
 
 
 
+*****************************2nd solution*********************************
+
+
+
+with cte as (select *,
+case when score= min(score) over(partition by exam_id) then 1 else 0 end as min_score,
+case when score=  max(score) over(partition by exam_id) then 1 else 0 end as max_score
+from exams)
+
+select student_id
+from cte 
+group by student_id
+having sum(min_score)=0 and max(max_score)=0
+
+
+
